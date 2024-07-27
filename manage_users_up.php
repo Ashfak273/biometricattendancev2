@@ -4,7 +4,7 @@
       <tr>
         <th>Finger .ID</th>
         <th>Name</th>
-        <th>Gender</th>
+        <!-- <th>Gender</th> -->
         <th>S.No</th>
         <th>Date</th>
         <th>Department</th>
@@ -40,7 +40,7 @@
                     	</form>
                     </TD>
                   <TD><?php echo $row['username'];?></TD>
-                  <TD><?php echo $row['gender'];?></TD>
+                  <!-- <TD><?php echo $row['gender'];?></TD> -->
                   <TD><?php echo $row['serialnumber'];?></TD>
                   <TD><?php echo $row['user_date'];?></TD>
                   <TD><?php echo ($row['device_dep'] == "0") ? "All" : $row['device_dep'];?></TD>

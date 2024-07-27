@@ -73,7 +73,7 @@ if (!isset($_SESSION['Admin-name'])) {
                     </select>
 			<legend><span class="number">1</span> Student Fingerprint ID:</legend>
 				<label>Enter Fingerprint ID:</label>
-				<input type="number" name="fingerid" id="fingerid" placeholder="Student Fingerprint ID...">
+				<input type="number" name="fingerid" id="fingerid" placeholder="Student Fingerprint ID..." min="1">
 				<button type="button" name="fingerid_add" class="fingerid_add">Add Fingerprint ID</button>
 			</fieldset>
 			<div class="alert">
@@ -84,14 +84,17 @@ if (!isset($_SESSION['Admin-name'])) {
 				<input type="hidden" name="finger_id" id="finger_id">
 				<input type="hidden" name="dev_id" id="dev_id">
 				<input type="text" name="name" id="name" placeholder="Student Name...">
-				<input type="text" name="number" id="number" placeholder="Serial Number...2019/E/001">
+				<input type="text" name="number" id="number" placeholder="Serial Number...2019/E/001" >
 				<!-- <input type="email" name="email" id="email" placeholder="User Email..."> -->
-			</fieldset>
+				
+				<input type="hidden" name="gender" class="gender" value="Male">
+			<!-- </fieldset>
 			<label>
 				<input type="radio" name="gender" class="gender" value="Female">Female
 	          	<input type="radio" name="gender" class="gender" value="Male" checked="checked">Male
 	      	</label >
-			</fieldset>
+			</fieldset> -->
+
 				<div class="row">
 					<div class="col-lg-4">
 						<button type="button" name="user_add" class="user_add">Add</button>
