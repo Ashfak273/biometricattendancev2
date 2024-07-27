@@ -26,7 +26,7 @@ if (!isset($_SESSION['Admin-name'])) {
 <?php include'header.php'; ?> 
 <main>
 <section>
-  <h1 class="slideInDown animated">Enrolled Users</h1>
+  <h1 class="slideInDown animated">Enrolled Students</h1>
   <!--User table-->
   <div class="table-responsive slideInRight animated" style="max-height: 400px;"> 
     <table class="table">
