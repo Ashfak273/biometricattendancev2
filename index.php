@@ -34,7 +34,7 @@ if (!isset($_SESSION['Admin-name'])) {
         <tr>
           <th>ID | Name</th>
           <th>Serial Number</th>
-          <th>Gender</th>
+          <!-- <th>Gender</th> -->
           <th>Finger ID</th>
           <th>Date</th>
           <th>Device</th>
@@ -59,7 +59,7 @@ if (!isset($_SESSION['Admin-name'])) {
                       <TR>
                       <TD><?php echo $row['id']; echo" | "; echo $row['username'];?></TD>
                       <TD><?php echo $row['serialnumber'];?></TD>
-                      <TD><?php echo $row['gender'];?></TD>
+                      <!-- <TD><?php echo $row['gender'];?></TD> -->
                       <TD><?php echo $row['fingerprint_id'];?></TD>
                       <TD><?php echo $row['user_date'];?></TD>
                       <TD><?php echo $row['device_dep'];?></TD>
