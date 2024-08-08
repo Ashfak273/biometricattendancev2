@@ -1,9 +1,9 @@
 <?php  
 //Connect to database
 require 'connectDB.php';
-date_default_timezone_set('Asia/Damascus');
+date_default_timezone_set('Asia/Colombo');
 $d = date("Y-m-d");
-$t = date("H:i:sa");
+$t = date("H:i:s");
 
 if (isset($_GET['FingerID']) && isset($_GET['device_token'])) {
     
@@ -15,7 +15,7 @@ if (isset($_GET['FingerID']) && isset($_GET['device_token'])) {
     if (!mysqli_stmt_prepare($result, $sql)) {
         echo "SQL_Error_Select_device";
         exit();
-    }
+    } 
     else{
         mysqli_stmt_bind_param($result, "s", $device_uid);
         mysqli_stmt_execute($result);
@@ -29,7 +29,7 @@ if (isset($_GET['FingerID']) && isset($_GET['device_token'])) {
                 if (!mysqli_stmt_prepare($result, $sql)) {
                     echo "SQL_Error_Select_card";
                     exit();
-                }
+                } 
                 else{
                     mysqli_stmt_bind_param($result, "s", $fingerID);
                     mysqli_stmt_execute($result);
@@ -40,65 +40,84 @@ if (isset($_GET['FingerID']) && isset($_GET['device_token'])) {
                         if ($row['username'] != "None" && $row['add_fingerid'] == 0){
                             $Uname = $row['username'];
                             $Number = $row['serialnumber'];
-                            $sql = "SELECT * FROM users_logs WHERE fingerprint_id=? AND checkindate=? AND timeout=''";
+                            $sql = "SELECT * FROM users_logs WHERE fingerprint_id=? AND checkindate=? AND timeout='' ORDER BY timein DESC LIMIT 1";
+                            // $sql = "SELECT * FROM users_logs WHERE fingerprint_id=? AND checkindate=? AND timeout=''";
                             $result = mysqli_stmt_init($conn);
                             if (!mysqli_stmt_prepare($result, $sql)) {
                                 echo "SQL_Error_Select_logs";
                                 exit();
-                            }
+                            } 
                             else{
                                 mysqli_stmt_bind_param($result, "ss", $fingerID, $d);
                                 mysqli_stmt_execute($result);
                                 $resultl = mysqli_stmt_get_result($result);
-                                //*****************************************************
+                                //*****************************************************                             
                                 //Login
-                                if (!$row = mysqli_fetch_assoc($resultl)){
+                                if ($log = mysqli_fetch_assoc($resultl)){
+                                    $login_time = strtotime($log['timein']);
+                                    $current_time = strtotime($t);
+                                    $time_diff = ($current_time - $login_time) / 3600; // in hours
 
-                                    $sql = "INSERT INTO users_logs (username, serialnumber, fingerprint_id, device_uid, device_dep,checkindate, timein, timeout) VALUES (? ,?, ?, ?, ?, ?, ?, ?)";
+                                    if ($time_diff >= 1) {
+                                        // More than or equal to one hour, create new attendance
+                                        $sql = "INSERT INTO users_logs (username, serialnumber, fingerprint_id, device_uid, device_dep, checkindate, timein, timeout) VALUES (? ,?, ?, ?, ?, ?, ?, ?)";
+                                        $result = mysqli_stmt_init($conn);
+                                        if (!mysqli_stmt_prepare($result, $sql)) {
+                                            echo "SQL_Error_Select_login1";
+                                            exit();
+                                        } else {
+                                            $timeout = "00:00:00";
+                                            mysqli_stmt_bind_param($result, "ssisssss", $Uname, $Number, $fingerID, $device_uid, $device_dep, $d, $t, $timeout);
+                                            mysqli_stmt_execute($result);
+                                            echo "login".$Uname;
+                                            exit();
+                                        }
+                                    } 
+                                    else {
+                                        // Less than one hour, update timeout
+                                        $sql = "UPDATE users_logs SET timeout=?, fingerout=1 WHERE fingerprint_id=? AND checkindate=? AND fingerout=0";
+                                        $result = mysqli_stmt_init($conn);
+                                        if (!mysqli_stmt_prepare($result, $sql)) {
+                                            echo "SQL_Error_insert_logout1";
+                                            exit();
+                                        } else {
+                                            mysqli_stmt_bind_param($result, "sis", $t, $fingerID, $d);
+                                            mysqli_stmt_execute($result);
+                                            echo "logout".$Uname;
+                                            exit();
+                                        }
+                                    }
+                                } 
+                                else{
+                                    // No previous log found, create new attendance
+                                    $sql = "INSERT INTO users_logs (username, serialnumber, fingerprint_id, device_uid, device_dep, checkindate, timein, timeout) VALUES (? ,?, ?, ?, ?, ?, ?, ?)";
                                     $result = mysqli_stmt_init($conn);
                                     if (!mysqli_stmt_prepare($result, $sql)) {
                                         echo "SQL_Error_Select_login1";
                                         exit();
-                                    }
+                                    } 
                                     else{
                                         $timeout = "00:00:00";
-                                        mysqli_stmt_bind_param($result, "sdisssss", $Uname, $Number, $fingerID, $device_uid, $device_dep, $d, $t, $timeout);
+                                        mysqli_stmt_bind_param($result, "ssisssss", $Uname, $Number, $fingerID, $device_uid, $device_dep, $d, $t, $timeout);
                                         mysqli_stmt_execute($result);
-
+                                        
                                         echo "login".$Uname;
                                         exit();
                                     }
                                 }
-                                //*****************************************************
-                                //Logout
-                                else{
-                                    $sql="UPDATE users_logs SET timeout=?, fingerout=1 WHERE fingerprint_id=? AND checkindate=? AND fingerout=0";
-                                    $result = mysqli_stmt_init($conn);
-                                    if (!mysqli_stmt_prepare($result, $sql)) {
-                                        echo "SQL_Error_insert_logout1";
-                                        exit();
-                                    }
-                                    else{
-                                        mysqli_stmt_bind_param($result, "sis", $t, $fingerID, $d);
-                                        mysqli_stmt_execute($result);
-
-                                        echo "logout".$Uname;
-                                        exit();
-                                    }
-                                }
                             }
-                        }
+                        } 
                         else{
                             echo "Not registerd!";
                             exit();
                         }
-                    }
+                    } 
                     else{
                         echo "Not found!";
                         exit();
                     }
                 }
-            }
+            } 
             else if ($device_mode == 0) {
                 //New Fingerprint has been added
                 $sql = "SELECT * FROM users WHERE fingerprint_id=? AND device_uid=?";
@@ -106,7 +125,7 @@ if (isset($_GET['FingerID']) && isset($_GET['device_token'])) {
                 if (!mysqli_stmt_prepare($result, $sql)) {
                     echo "SQL_Error_Select_card";
                     exit();
-                }
+                } 
                 else{
                     mysqli_stmt_bind_param($result, "ss", $fingerID, $device_uid);
                     mysqli_stmt_execute($result);
@@ -114,14 +133,14 @@ if (isset($_GET['FingerID']) && isset($_GET['device_token'])) {
                     if ($row = mysqli_fetch_assoc($resultl)){
                         echo "available";
                         exit();
-                    }
+                    } 
                     else{
                         $sql = "INSERT INTO users ( device_uid, device_dep, fingerprint_id, user_date, add_fingerid) VALUES (?, ?, ?, CURDATE(), 0)";
                         $result = mysqli_stmt_init($conn);
                         if (!mysqli_stmt_prepare($result, $sql)) {
                             echo "SQL_Error_Select_add";
                             exit();
-                        }
+                        } 
                         else{
                             mysqli_stmt_bind_param($result, "sss", $device_uid, $device_dep, $fingerID );
                             mysqli_stmt_execute($result);
@@ -132,7 +151,7 @@ if (isset($_GET['FingerID']) && isset($_GET['device_token'])) {
                     }
                 }    
             }
-        }
+        } 
         else{
             echo "Invalid Device!";
             exit();
@@ -148,7 +167,7 @@ if (isset($_GET['Get_Fingerid']) && isset($_GET['device_token'])) {
     if (!mysqli_stmt_prepare($result, $sql)) {
         echo "SQL_Error_Select_device";
         exit();
-    }
+    } 
     else{
         mysqli_stmt_bind_param($result, "s", $device_uid);
         mysqli_stmt_execute($result);
@@ -161,7 +180,7 @@ if (isset($_GET['Get_Fingerid']) && isset($_GET['device_token'])) {
                 if (!mysqli_stmt_prepare($result, $sql)) {
                     echo "SQL_Error_Select";
                     exit();
-                }
+                } 
                 else{
                     mysqli_stmt_bind_param($result, "s", $device_uid);
                     mysqli_stmt_execute($result);
@@ -169,13 +188,13 @@ if (isset($_GET['Get_Fingerid']) && isset($_GET['device_token'])) {
                     if ($row = mysqli_fetch_assoc($resultl)) {
                         echo "add-id".$row['fingerprint_id'];
                         exit();
-                    }
+                    } 
                     else{
                         echo "Nothing";
                         exit();
                     }
                 }
-            }
+            } 
             else{
                 exit();
             }
@@ -195,7 +214,7 @@ if (isset($_GET['Check_mode']) && isset($_GET['device_token'])) {
     if (!mysqli_stmt_prepare($result, $sql)) {
         echo "SQL_Error_Select_device";
         exit();
-    }
+    } 
     else{
         mysqli_stmt_bind_param($result, "s", $device_uid);
         mysqli_stmt_execute($result);
@@ -207,7 +226,7 @@ if (isset($_GET['Check_mode']) && isset($_GET['device_token'])) {
                 if (!mysqli_stmt_prepare($result, $sql)) {
                     echo "SQL_Error_Select";
                     exit();
-                }
+                } 
                 else{
                     mysqli_stmt_bind_param($result, "s", $device_uid);
                     mysqli_stmt_execute($result);
@@ -215,17 +234,17 @@ if (isset($_GET['Check_mode']) && isset($_GET['device_token'])) {
                     if ($row = mysqli_fetch_assoc($resultl)) {
                         echo "mode".$row['device_mode'];
                         exit();
-                    }
+                    } 
                     else{
                         echo "Nothing";
                         exit();
                     }
                 }
-            }
+            } 
             else{
                 exit();
             }
-        }
+        } 
         else{
             echo "Invalid Device";
             exit();
@@ -254,7 +273,7 @@ if (!empty($_GET['confirm_id']) && isset($_GET['device_token'])) {
             if (!mysqli_stmt_prepare($result, $sql)) {
                 echo "SQL_Error_Select";
                 exit();
-            }
+            } 
             else{
                 mysqli_stmt_bind_param($result, "s", $device_uid);
                 mysqli_stmt_execute($result);
@@ -288,7 +307,7 @@ if (isset($_GET['DeleteID']) && isset($_GET['device_token'])) {
         if (!mysqli_stmt_prepare($result, $sql)) {
             echo "SQL_Error_Select_device";
             exit();
-        }
+        } 
         else{
             mysqli_stmt_bind_param($result, "s", $device_uid);
             mysqli_stmt_execute($result);
@@ -299,7 +318,7 @@ if (isset($_GET['DeleteID']) && isset($_GET['device_token'])) {
                 if (!mysqli_stmt_prepare($result, $sql)) {
                     echo "SQL_Error_Select";
                     exit();
-                }
+                } 
                 else{
                     mysqli_stmt_bind_param($result, "s", $device_uid);
                     mysqli_stmt_execute($result);
@@ -313,7 +332,7 @@ if (isset($_GET['DeleteID']) && isset($_GET['device_token'])) {
                         if (!mysqli_stmt_prepare($result, $sql)) {
                             echo "SQL_Error_delete";
                             exit();
-                        }
+                        } 
                         else{
                             mysqli_stmt_execute($result);
                             exit();
@@ -324,13 +343,13 @@ if (isset($_GET['DeleteID']) && isset($_GET['device_token'])) {
                         exit();
                     }
                 }
-            }
+            } 
             else{
                 echo "Invalid Device";
                 exit();
             }
         }
-    }
+    } 
     else{
         exit();
     }

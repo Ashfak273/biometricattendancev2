@@ -91,11 +91,11 @@ if (!isset($_SESSION['Admin-name'])) {
                     <div class="panel panel-primary">
                       <div class="panel-heading">
                           Filter By:
-                        <div class="time">
+                        <div class="time" style="width: 80px;">
                           <input type="radio" id="radio-one" name="time_sel" class="time_sel" value="Time_in" checked/>
                           <label for="radio-one">Time-in</label>
-                          <input type="radio" id="radio-two" name="time_sel" class="time_sel" value="Time_out" />
-                          <label for="radio-two">Time-out</label>
+                          <!-- <input type="radio" id="radio-two" name="time_sel" class="time_sel" value="Time_out" />
+                          <label for="radio-two">Time-out</label> -->
                         </div>
                       </div>
                       <div class="panel-body">

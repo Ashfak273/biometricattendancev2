@@ -86,14 +86,12 @@ if (!isset($_SESSION['Admin-name'])) {
 				<input type="text" name="name" id="name" placeholder="Student Name...">
 				<input type="text" name="number" id="number" placeholder="Serial Number...2019/E/001" >
 				<!-- <input type="email" name="email" id="email" placeholder="User Email..."> -->
-				
-				<input type="hidden" name="gender" class="gender" value="Male">
-			<!-- </fieldset>
-			<label>
-				<input type="radio" name="gender" class="gender" value="Female">Female
-	          	<input type="radio" name="gender" class="gender" value="Male" checked="checked">Male
-	      	</label >
-			</fieldset> -->
+				</fieldset>
+				<label>
+					<input type="radio" name="gender" class="gender" value="Female">Female
+					<input type="radio" name="gender" class="gender" value="Male" checked="checked">Male
+				</label >
+				</fieldset>
 
 				<div class="row">
 					<div class="col-lg-4">
