@@ -340,12 +340,12 @@ if (isset($_POST['delete'])) {
         echo "There no selected user to remove";
         exit();
     } else {
-        $sql="UPDATE users SET del_fingerid=1 WHERE fingerprint_id=? AND device_uid=?";
+        $sql = "DELETE FROM users WHERE fingerprint_id=? AND device_uid=?";
         $result = mysqli_stmt_init($conn);
         if (!mysqli_stmt_prepare($result, $sql)) {
-            echo "SQL_Error_delete";
+            echo "SQL_Error";
             exit();
-        }
+        } 
         else{
             mysqli_stmt_bind_param($result, "is", $finger_id, $dev_uid);
             mysqli_stmt_execute($result);
