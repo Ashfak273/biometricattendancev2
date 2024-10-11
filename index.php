@@ -36,8 +36,8 @@ if (!isset($_SESSION['Admin-name'])) {
           <th>Serial Number</th>
           <!-- <th>Gender</th> -->
           <th>Finger ID</th>
-          <th>Date</th>
-          <th>Device</th>
+          <th>Enrolled Date</th>
+          <th>Enrolled Device</th>
         </tr>
       </thead>
       <tbody class="table-secondary">

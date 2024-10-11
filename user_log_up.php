@@ -11,8 +11,8 @@ session_start();
         <th>Fingerprint ID</th>
         <th>Device Dep</th>
         <th>Date</th>
-        <th>Time In</th>
-        <th>Time Out</th>
+        <th>Attended Time</th>
+        <!-- <th>Time Out</th> -->
       </tr>
     </thead>
     <tbody class="table-secondary">
@@ -125,7 +125,7 @@ session_start();
                   <TD><?php echo $row['device_dep'];?></TD>
                   <TD><?php echo $row['checkindate'];?></TD>
                   <TD><?php echo $row['timein'];?></TD>
-                  <TD><?php echo $row['timeout'];?></TD>
+                  <!-- <TD><?php echo $row['timeout'];?></TD> -->
                   </TR>
       <?php
                 }
